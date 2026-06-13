@@ -8,8 +8,6 @@
 <meta name="apple-mobile-web-app-title" content="お弁当在庫">
 <meta name="theme-color" content="#f5f0e8">
 <title>お弁当在庫管理</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #f5f0e8;
@@ -24,210 +22,124 @@
   --green-text: #1f5c3a;
   --dot-active: #3a7d5a;
   --dot-eaten: #ddd8ce;
-  --dot-text-active: #ffffff;
-  --dot-text-eaten: #b0a898;
   --danger: #c0392b;
   --radius: 14px;
   --radius-sm: 8px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body {
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100dvh;
   padding-bottom: env(safe-area-inset-bottom);
 }
-
-/* ヘッダー */
 .header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   padding: 16px 20px 12px;
   padding-top: calc(16px + env(safe-area-inset-top));
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  position: sticky; top: 0; z-index: 10;
 }
-.header h1 { font-size: 18px; font-weight: 700; letter-spacing: .02em; }
+.header h1 { font-size: 18px; font-weight: 700; letter-spacing: .02em; display: flex; align-items: center; gap: 8px; }
+.sync-indicator { font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
+.sync-ok   { background: #e8f4ed; color: #1f5c3a; }
+.sync-wait { background: #fff8e0; color: #7a6000; }
+.sync-err  { background: #fdecea; color: #c0392b; }
 .header-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-
-/* タブ */
 .tabs {
-  display: flex;
-  background: var(--surface);
+  display: flex; background: var(--surface);
   border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: calc(60px + env(safe-area-inset-top));
-  z-index: 9;
+  position: sticky; top: calc(62px + env(safe-area-inset-top)); z-index: 9;
 }
 .tab {
-  flex: 1;
-  padding: 10px 0;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: center;
-  color: var(--text2);
-  border: none;
-  background: none;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
+  flex: 1; padding: 10px 0; font-size: 13px; font-weight: 500;
+  text-align: center; color: var(--text2); border: none; background: none;
+  cursor: pointer; border-bottom: 2px solid transparent;
   transition: color .2s, border-color .2s;
 }
 .tab.active { color: var(--green); border-bottom-color: var(--green); }
-
-/* コンテンツ */
 .content { padding: 16px; }
-
-/* 在庫カード */
 .stock-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  margin-bottom: 10px;
-  overflow: hidden;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 10px; overflow: hidden;
 }
-.stock-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px 10px;
-}
+.stock-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px 10px; }
 .stock-icon { font-size: 22px; flex-shrink: 0; }
 .stock-name { font-size: 15px; font-weight: 700; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .stock-count { font-size: 13px; color: var(--text2); flex-shrink: 0; }
 .dots-area { padding: 0 16px 10px; display: flex; flex-wrap: wrap; gap: 5px; }
 .dot {
-  width: 38px; height: 38px;
-  border-radius: 50%;
+  width: 38px; height: 38px; border-radius: 50%;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  line-height: 1.1;
-  flex-shrink: 0;
+  line-height: 1.1; flex-shrink: 0;
 }
 .dot.active { background: var(--dot-active); }
-.dot.eaten { background: var(--dot-eaten); }
+.dot.eaten  { background: var(--dot-eaten); }
 .dot-month { font-size: 8px; font-weight: 500; }
 .dot.active .dot-month { color: rgba(255,255,255,.8); }
-.dot.eaten .dot-month { color: var(--dot-text-eaten); }
+.dot.eaten  .dot-month { color: var(--text3); }
 .dot-day { font-size: 12px; font-weight: 700; }
 .dot.active .dot-day { color: #fff; }
-.dot.eaten .dot-day { color: var(--dot-text-eaten); }
-.stock-footer {
-  display: flex;
-  border-top: 1px solid var(--border);
-}
+.dot.eaten  .dot-day  { color: var(--text3); }
+.stock-footer { display: flex; border-top: 1px solid var(--border); }
 .eat-btn {
-  flex: 1;
-  padding: 11px 0;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--green-text);
-  background: var(--green-bg);
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background .15s;
+  flex: 1; padding: 11px 0; font-size: 14px; font-weight: 700;
+  color: var(--green-text); background: var(--green-bg);
+  border: none; cursor: pointer; font-family: inherit; transition: background .15s;
 }
-.eat-btn:active { background: #d0e8d8; }
+.eat-btn:active   { background: #d0e8d8; }
 .eat-btn:disabled { opacity: .35; cursor: not-allowed; }
 .add-stock-btn {
-  width: 48px;
-  border: none;
-  border-left: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text2);
-  font-size: 20px;
-  cursor: pointer;
-  transition: background .15s;
+  width: 48px; border: none; border-left: 1px solid var(--border);
+  background: var(--surface); color: var(--text2); font-size: 20px;
+  cursor: pointer; transition: background .15s;
 }
 .add-stock-btn:active { background: var(--surface2); }
 .del-btn {
-  width: 48px;
-  border: none;
-  border-left: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text3);
-  font-size: 18px;
-  cursor: pointer;
-  transition: background .15s, color .15s;
+  width: 48px; border: none; border-left: 1px solid var(--border);
+  background: var(--surface); color: var(--text3); font-size: 18px;
+  cursor: pointer; transition: background .15s, color .15s;
 }
 .del-btn:active { background: #fdecea; color: var(--danger); }
-
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--text3);
-  font-size: 14px;
-  line-height: 1.8;
-}
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; line-height: 1.8; }
 .empty-icon { font-size: 40px; margin-bottom: 10px; }
-
-/* 登録フォーム */
 .form-section { margin-bottom: 20px; }
 .form-label { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 6px; display: block; letter-spacing: .04em; }
 .form-input {
-  width: 100%;
-  height: 46px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 15px;
-  padding: 0 14px;
-  font-family: inherit;
-  appearance: none;
+  width: 100%; height: 46px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--surface);
+  color: var(--text); font-size: 15px; padding: 0 14px;
+  font-family: inherit; appearance: none;
 }
 .form-input:focus { outline: none; border-color: var(--green); }
 .form-row { display: flex; gap: 10px; }
 .form-row .form-section { flex: 1; margin-bottom: 0; }
 .submit-btn {
-  width: 100%;
-  height: 50px;
-  border-radius: var(--radius-sm);
-  border: none;
-  background: var(--green);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background .15s;
+  width: 100%; height: 50px; border-radius: var(--radius-sm);
+  border: none; background: var(--green); color: #fff;
+  font-size: 16px; font-weight: 700; font-family: inherit;
+  cursor: pointer; margin-top: 20px; transition: background .15s;
 }
 .submit-btn:active { background: #2d6347; }
-
-/* ログ */
 .log-item {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  margin-bottom: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  margin-bottom: 8px; display: flex; justify-content: space-between;
+  align-items: center; font-size: 13px;
 }
 .log-text { color: var(--text2); }
 .log-time { color: var(--text3); font-size: 11px; flex-shrink: 0; margin-left: 8px; }
-
-/* モーダル */
 .modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  z-index: 100;
-  align-items: flex-end;
-  justify-content: center;
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.45); z-index: 100;
+  align-items: flex-end; justify-content: center;
 }
 .modal-overlay.open { display: flex; }
 .modal {
-  background: var(--surface);
-  border-radius: 20px 20px 0 0;
+  background: var(--surface); border-radius: 20px 20px 0 0;
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
-  width: 100%;
-  max-width: 480px;
+  width: 100%; max-width: 480px;
 }
 .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
 .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
@@ -239,27 +151,18 @@ body {
 }
 .modal-ok {
   flex: 2; height: 46px; border-radius: var(--radius-sm);
-  border: none; background: var(--green);
-  color: #fff; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer;
+  border: none; background: var(--green); color: #fff;
+  font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer;
 }
-
-/* トースト */
 .toast {
   position: fixed;
   bottom: calc(24px + env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--text);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 500;
-  padding: 10px 20px;
-  border-radius: 99px;
-  white-space: nowrap;
+  left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--text); color: #fff;
+  font-size: 13px; font-weight: 500; padding: 10px 20px;
+  border-radius: 99px; white-space: nowrap;
   transition: transform .3s ease, opacity .3s ease;
-  opacity: 0;
-  z-index: 200;
-  pointer-events: none;
+  opacity: 0; z-index: 200; pointer-events: none;
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 </style>
@@ -267,7 +170,7 @@ body {
 <body>
 
 <div class="header">
-  <h1>🍱 お弁当在庫管理</h1>
+  <h1>🍱 お弁当在庫管理 <span class="sync-indicator sync-wait" id="sync-badge">同期中…</span></h1>
   <div class="header-sub" id="header-sub">読み込み中…</div>
 </div>
 
@@ -320,11 +223,46 @@ body {
 <div class="toast" id="toast"></div>
 
 <script>
-const KEY = 'bento_pwa_v1';
-let state = { items: [], log: [] };
-let modalTarget = null;
-let currentTab = 'stock';
+// ── Supabase設定 ──────────────────────────────
+const SB_URL  = 'https://ustmiudnrpayexrzohvz.supabase.co';
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzdG1pdWRucnBheWV4cnpvaHZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjg0NzYsImV4cCI6MjA5NjkwNDQ3Nn0.WGCn5jqiS2yGblVSKXtOjlx96aWt9CMVEjXE4whCT-Y';
+const HEADERS = { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
 
+async function sbGet(table) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?order=updated_at.asc`, { headers: { ...HEADERS, 'Prefer': 'return=representation' } });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function sbUpsert(table, body) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { ...HEADERS, 'Prefer': 'resolution=merge-duplicates,return=representation' },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function sbDelete(table, name) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?name=eq.${encodeURIComponent(name)}`, {
+    method: 'DELETE', headers: HEADERS
+  });
+  if (!r.ok) throw new Error(await r.text());
+}
+async function sbInsertLog(entry) {
+  await fetch(`${SB_URL}/rest/v1/bento_log`, {
+    method: 'POST',
+    headers: { ...HEADERS, 'Prefer': 'return=minimal' },
+    body: JSON.stringify(entry)
+  });
+}
+
+// ── 状態 ──────────────────────────────────────
+let items = [];   // { id?, name, batches, updated_at? }
+let logs  = [];
+let modalTarget = null;
+let currentTab  = 'stock';
+
+// ── アイコンマップ ────────────────────────────
 const ICON_MAP = [
   { words: ['きのこ','キノコ','しいたけ','椎茸','まいたけ','舞茸','えのき','エノキ','なめこ','マッシュルーム','mushroom'], icon: '🍄' },
   { words: ['から揚げ','唐揚げ','から揚','karaage'], icon: '🍗' },
@@ -350,52 +288,47 @@ const ICON_MAP = [
   { words: ['ポテト','potato'], icon: '🍟' },
   { words: ['とんかつ','トンカツ','カツ','コロッケ'], icon: '🥩' },
 ];
-
 function getIcon(name) {
   const n = name.toLowerCase();
-  for (const m of ICON_MAP) {
-    for (const w of m.words) { if (n.includes(w.toLowerCase())) return m.icon; }
-  }
+  for (const m of ICON_MAP) { for (const w of m.words) { if (n.includes(w.toLowerCase())) return m.icon; } }
   return '🍱';
 }
 
+// ── ユーティリティ ────────────────────────────
 function todayStr() {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
-
-function load() { try { const r = localStorage.getItem(KEY); if (r) state = JSON.parse(r); } catch(e) {} }
-function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
-
 function fmt(ts) {
   const d = new Date(ts);
   return (d.getMonth()+1) + '/' + d.getDate() + ' ' + d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
 }
-
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
-
+function setSyncBadge(state) {
+  const b = document.getElementById('sync-badge');
+  if (state === 'ok')   { b.className = 'sync-indicator sync-ok';   b.textContent = '✓ 同期済み'; }
+  if (state === 'wait') { b.className = 'sync-indicator sync-wait';  b.textContent = '同期中…'; }
+  if (state === 'err')  { b.className = 'sync-indicator sync-err';   b.textContent = 'オフライン'; }
+}
 function totalCount(item) { return item.batches.reduce((s,b) => s + b.remaining, 0); }
 
+// ── 描画 ─────────────────────────────────────
 function makeDots(batches) {
-  let h = '';
-  let count = 0;
+  let h = '', count = 0;
   for (const b of batches) {
     const d = new Date(b.date + 'T00:00:00');
-    const mo = (d.getMonth()+1) + '月';
-    const dy = d.getDate() + '日';
+    const mo = (d.getMonth()+1) + '月', dy = d.getDate() + '日';
     for (let i = 0; i < b.remaining; i++) {
-      if (count >= 14) { h += `<span style="font-size:11px;color:var(--text3);align-self:center;">+${totalRemaining(batches,count)}</span>`; return h; }
+      if (count >= 14) { h += `<span style="font-size:11px;color:var(--text3);align-self:center;">+${batches.reduce((s,x)=>s+x.total,0)-count}</span>`; return h; }
       h += `<span class="dot active"><span class="dot-month">${mo}</span><span class="dot-day">${dy}</span></span>`;
       count++;
     }
-    const eaten = b.total - b.remaining;
-    for (let i = 0; i < eaten; i++) {
-      if (count >= 14) { h += `<span style="font-size:11px;color:var(--text3);align-self:center;">+${totalRemaining(batches,count)}</span>`; return h; }
+    for (let i = 0; i < b.total - b.remaining; i++) {
+      if (count >= 14) return h;
       h += `<span class="dot eaten"><span class="dot-month">${mo}</span><span class="dot-day">${dy}</span></span>`;
       count++;
     }
@@ -403,60 +336,52 @@ function makeDots(batches) {
   return h;
 }
 
-function totalRemaining(batches, shown) {
-  const total = batches.reduce((s,b) => s + b.total, 0);
-  return total - shown;
-}
-
 function renderStock() {
   const el = document.getElementById('tab-stock');
-  if (state.items.length === 0) {
+  if (items.length === 0) {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">🍱</div>まだお弁当が登録されていません。<br>「作り置き登録」タブから追加してください。</div>`;
-    updateHeader();
-    return;
+    updateHeader(); return;
   }
-  el.innerHTML = state.items.map((item, i) => {
+  el.innerHTML = items.map((item, i) => {
     const cnt = totalCount(item);
-    return `
-      <div class="stock-card">
-        <div class="stock-header">
-          <span class="stock-icon">${getIcon(item.name)}</span>
-          <span class="stock-name">${item.name}</span>
-          <span class="stock-count">${cnt}個</span>
-        </div>
-        <div class="dots-area">${makeDots(item.batches)}</div>
-        <div class="stock-footer">
-          <button class="eat-btn" onclick="eat(${i})" ${cnt===0?'disabled':''}>✓ 食べた（1個消費）</button>
-          <button class="add-stock-btn" onclick="openModal(${i})" aria-label="追加">＋</button>
-          <button class="del-btn" onclick="deleteItem(${i})" aria-label="削除">🗑</button>
-        </div>
-      </div>`;
+    return `<div class="stock-card">
+      <div class="stock-header">
+        <span class="stock-icon">${getIcon(item.name)}</span>
+        <span class="stock-name">${item.name}</span>
+        <span class="stock-count">${cnt}個</span>
+      </div>
+      <div class="dots-area">${makeDots(item.batches)}</div>
+      <div class="stock-footer">
+        <button class="eat-btn" onclick="eat(${i})" ${cnt===0?'disabled':''}>✓ 食べた（1個消費）</button>
+        <button class="add-stock-btn" onclick="openModal(${i})" aria-label="追加">＋</button>
+        <button class="del-btn" onclick="deleteItem(${i})" aria-label="削除">🗑</button>
+      </div>
+    </div>`;
   }).join('');
   updateHeader();
 }
 
 function updateHeader() {
-  const total = state.items.reduce((s,i) => s + totalCount(i), 0);
-  const kinds = state.items.filter(i => totalCount(i) > 0).length;
+  const total = items.reduce((s,i) => s + totalCount(i), 0);
+  const kinds = items.filter(i => totalCount(i) > 0).length;
   document.getElementById('header-sub').textContent = `合計 ${total}個 / ${kinds}種類`;
 }
 
 function renderLog() {
   const el = document.getElementById('tab-log');
-  if (state.log.length === 0) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div>まだ記録はありません。</div>`;
-    return;
+  if (logs.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div>まだ記録はありません。</div>`; return;
   }
-  el.innerHTML = [...state.log].reverse().slice(0, 50).map(l => `
+  el.innerHTML = [...logs].reverse().slice(0,50).map(l => `
     <div class="log-item">
       <span class="log-text">${l.action==='eat'?'🍱 消費':'📦 追加'} ${l.name}${l.delta?' +'+l.delta+'個':''}</span>
-      <span class="log-time">${fmt(l.time)}</span>
+      <span class="log-time">${fmt(new Date(l.created_at).getTime())}</span>
     </div>`).join('');
 }
 
 function updateDl() {
   const dl = document.getElementById('menu-dl');
-  dl.innerHTML = [...new Set(state.items.map(i => i.name))].map(n => `<option value="${n}">`).join('');
+  dl.innerHTML = [...new Set(items.map(i => i.name))].map(n => `<option value="${n}">`).join('');
 }
 
 function switchTab(name) {
@@ -467,55 +392,85 @@ function switchTab(name) {
   document.querySelectorAll('.tab').forEach((btn, i) => {
     btn.classList.toggle('active', ['stock','register','log'][i] === name);
   });
-  if (name === 'stock') renderStock();
-  if (name === 'log') renderLog();
+  if (name === 'stock')   { loadFromServer(); }
+  if (name === 'log')     { loadLogs(); }
 }
 
-function addStock() {
-  const name = document.getElementById('new-name').value.trim();
+// ── サーバー読み込み ──────────────────────────
+async function loadFromServer() {
+  setSyncBadge('wait');
+  try {
+    items = await sbGet('bento_stock');
+    items.forEach(item => {
+      if (typeof item.batches === 'string') item.batches = JSON.parse(item.batches);
+    });
+    setSyncBadge('ok');
+  } catch(e) {
+    setSyncBadge('err');
+    showToast('⚠ オフラインです。前回のデータを表示しています。');
+  }
+  renderStock(); updateDl();
+}
+
+async function loadLogs() {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/bento_log?order=created_at.desc&limit=50`, { headers: HEADERS });
+    logs = await r.json();
+  } catch(e) { logs = []; }
+  renderLog();
+}
+
+// ── 操作 ─────────────────────────────────────
+async function addStock() {
+  const name  = document.getElementById('new-name').value.trim();
   const count = parseInt(document.getElementById('new-count').value) || 0;
-  const date = document.getElementById('new-date').value || todayStr();
+  const date  = document.getElementById('new-date').value || todayStr();
   if (!name || count <= 0) { showToast('名前と個数を入力してください'); return; }
-  const ex = state.items.find(i => i.name === name);
+
+  const ex = items.find(i => i.name === name);
   const batch = { date, total: count, remaining: count };
   if (ex) {
     const eb = ex.batches.find(b => b.date === date);
     if (eb) { eb.total += count; eb.remaining += count; } else { ex.batches.push(batch); }
+    await sbUpsert('bento_stock', { id: ex.id, name: ex.name, batches: ex.batches, updated_at: new Date().toISOString() });
   } else {
-    state.items.push({ name, batches: [batch] });
+    const res = await sbUpsert('bento_stock', { name, batches: [batch], updated_at: new Date().toISOString() });
+    if (res && res[0]) items.push(res[0]);
   }
-  state.log.push({ action: 'add', name, delta: count, time: Date.now() });
-  save(); updateDl();
-  document.getElementById('new-name').value = '';
+  await sbInsertLog({ action: 'add', name, delta: count, created_at: new Date().toISOString() });
+
+  document.getElementById('new-name').value  = '';
   document.getElementById('new-count').value = '5';
-  document.getElementById('new-date').value = todayStr();
+  document.getElementById('new-date').value  = todayStr();
   showToast('✓ ' + name + ' を ' + count + '個 登録しました');
   switchTab('stock');
 }
 
-function eat(i) {
-  const item = state.items[i];
+async function eat(i) {
+  const item  = items[i];
   const batch = item.batches.find(b => b.remaining > 0);
   if (!batch) return;
   batch.remaining -= 1;
-  state.log.push({ action: 'eat', name: item.name, time: Date.now() });
-  save(); renderStock();
+  await sbUpsert('bento_stock', { id: item.id, name: item.name, batches: item.batches, updated_at: new Date().toISOString() });
+  await sbInsertLog({ action: 'eat', name: item.name, created_at: new Date().toISOString() });
+  renderStock();
   showToast('🍱 ' + item.name + ' を1個消費しました');
 }
 
-function deleteItem(i) {
-  const name = state.items[i].name;
+async function deleteItem(i) {
+  const name = items[i].name;
   if (!confirm(name + ' を削除しますか？')) return;
-  state.log.push({ action: 'del', name, time: Date.now() });
-  state.items.splice(i, 1);
-  save(); renderStock(); updateDl();
+  await sbDelete('bento_stock', name);
+  await sbInsertLog({ action: 'del', name, created_at: new Date().toISOString() });
+  items.splice(i, 1);
+  renderStock(); updateDl();
 }
 
 function openModal(i) {
   modalTarget = i;
-  document.getElementById('modal-title').textContent = state.items[i].name + ' に追加';
+  document.getElementById('modal-title').textContent = items[i].name + ' に追加';
   document.getElementById('modal-count').value = '5';
-  document.getElementById('modal-date').value = todayStr();
+  document.getElementById('modal-date').value  = todayStr();
   document.getElementById('modal').classList.add('open');
 }
 function closeModal(e) {
@@ -523,23 +478,25 @@ function closeModal(e) {
   document.getElementById('modal').classList.remove('open');
   modalTarget = null;
 }
-function confirmModal() {
+async function confirmModal() {
   if (modalTarget === null) return;
   const count = parseInt(document.getElementById('modal-count').value) || 0;
-  const date = document.getElementById('modal-date').value || todayStr();
+  const date  = document.getElementById('modal-date').value || todayStr();
   if (count <= 0) return;
-  const item = state.items[modalTarget];
+  const item = items[modalTarget];
   const eb = item.batches.find(b => b.date === date);
   if (eb) { eb.total += count; eb.remaining += count; } else { item.batches.push({ date, total: count, remaining: count }); }
-  state.log.push({ action: 'add', name: item.name, delta: count, time: Date.now() });
-  save(); renderStock();
+  await sbUpsert('bento_stock', { id: item.id, name: item.name, batches: item.batches, updated_at: new Date().toISOString() });
+  await sbInsertLog({ action: 'add', name: item.name, delta: count, created_at: new Date().toISOString() });
+  renderStock();
   document.getElementById('modal').classList.remove('open');
   modalTarget = null;
   showToast('✓ ' + item.name + ' を ' + count + '個 追加しました');
 }
 
+// ── 起動 ─────────────────────────────────────
 document.getElementById('new-date').value = todayStr();
-load(); renderStock(); updateDl();
+loadFromServer();
 </script>
 </body>
 </html>

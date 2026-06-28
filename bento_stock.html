@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="お弁当在庫">
 <meta name="theme-color" content="#f5f0e8">
 <title>お弁当在庫管理</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍱</text></svg>">
 <style>
 :root {
   --bg: #f5f0e8;
@@ -75,12 +76,15 @@ body {
   line-height: 1.1; flex-shrink: 0;
 }
 .dot.active { background: var(--dot-active); }
+.dot.old    { background: #c0392b; }
 .dot.eaten  { background: var(--dot-eaten); }
 .dot-month { font-size: 8px; font-weight: 500; }
 .dot.active .dot-month { color: rgba(255,255,255,.8); }
+.dot.old    .dot-month { color: rgba(255,255,255,.8); }
 .dot.eaten  .dot-month { color: var(--text3); }
 .dot-day { font-size: 12px; font-weight: 700; }
 .dot.active .dot-day { color: #fff; }
+.dot.old    .dot-day  { color: #fff; }
 .dot.eaten  .dot-day  { color: var(--text3); }
 .stock-footer { display: flex; border-top: 1px solid var(--border); }
 .eat-btn {
@@ -265,6 +269,9 @@ let currentTab  = 'stock';
 // ── アイコンマップ ────────────────────────────
 const ICON_MAP = [
   { words: ['きのこ','キノコ','しいたけ','椎茸','まいたけ','舞茸','えのき','エノキ','なめこ','マッシュルーム','mushroom'], icon: '🍄' },
+  { words: ['丼','どんぶり'], icon: '🍚' },
+  { words: ['オムライス','omuraisu'], icon: '🍳' },
+  { words: ['ドリア','doria'], icon: '🫕' },
   { words: ['から揚げ','唐揚げ','から揚','karaage'], icon: '🍗' },
   { words: ['鶏','チキン','chicken'], icon: '🍗' },
   { words: ['鮭','サーモン','salmon','さけ'], icon: '🐟' },
@@ -272,7 +279,7 @@ const ICON_MAP = [
   { words: ['エビ','えび','shrimp','海老'], icon: '🦐' },
   { words: ['肉じゃが'], icon: '🥔' },
   { words: ['ハンバーグ','hamburg'], icon: '🍔' },
-  { words: ['卵','玉子','たまご','オムライス'], icon: '🥚' },
+  { words: ['卵','玉子','たまご'], icon: '🥚' },
   { words: ['野菜','ベジ','veget'], icon: '🥦' },
   { words: ['豚','ぶた','pork','生姜焼き','しょうが焼き'], icon: '🥩' },
   { words: ['牛','beef','すき焼き','ビーフ'], icon: '🥩' },
@@ -317,14 +324,20 @@ function setSyncBadge(state) {
 function totalCount(item) { return item.batches.reduce((s,b) => s + b.remaining, 0); }
 
 // ── 描画 ─────────────────────────────────────
+function isOld(dateStr) {
+  const made = new Date(dateStr + 'T00:00:00');
+  const diff = (new Date() - made) / (1000 * 60 * 60 * 24);
+  return diff >= 30;
+}
 function makeDots(batches) {
   let h = '', count = 0;
   for (const b of batches) {
     const d = new Date(b.date + 'T00:00:00');
     const mo = (d.getMonth()+1) + '月', dy = d.getDate() + '日';
+    const old = isOld(b.date);
     for (let i = 0; i < b.remaining; i++) {
       if (count >= 14) { h += `<span style="font-size:11px;color:var(--text3);align-self:center;">+${batches.reduce((s,x)=>s+x.total,0)-count}</span>`; return h; }
-      h += `<span class="dot active"><span class="dot-month">${mo}</span><span class="dot-day">${dy}</span></span>`;
+      h += `<span class="dot ${old ? 'old' : 'active'}" title="${old ? '⚠ 作成から1ヶ月以上経過' : b.date + ' 作成'}"><span class="dot-month">${mo}</span><span class="dot-day">${dy}</span></span>`;
       count++;
     }
     for (let i = 0; i < b.total - b.remaining; i++) {
@@ -372,7 +385,7 @@ function renderLog() {
   if (logs.length === 0) {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div>まだ記録はありません。</div>`; return;
   }
-  el.innerHTML = [...logs].reverse().slice(0,50).map(l => `
+  el.innerHTML = logs.slice(0,50).map(l => `
     <div class="log-item">
       <span class="log-text">${l.action==='eat'?'🍱 消費':'📦 追加'} ${l.name}${l.delta?' +'+l.delta+'個':''}</span>
       <span class="log-time">${fmt(new Date(l.created_at).getTime())}</span>
@@ -419,6 +432,7 @@ async function loadLogs() {
   } catch(e) { logs = []; }
   renderLog();
 }
+
 
 // ── 操作 ─────────────────────────────────────
 async function addStock() {
